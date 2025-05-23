@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sidebar with Theme Toggle</title>
+    <style>
+        /* CSS Variables for theming */
+        :root {
+            --bg-light: #e9ebf0;
+            --bg-dark: #1d1d20;
+            --text-light: #333333;
+            --text-dim-light: #555555;
+            --text-dark: #9e9e9e;
+            --text-dim-dark: #777777;
+            --accent-light: #0DCCC0;
+            --accent-dark: #0DCCC0;
+            --button-bg-light: #d1d3d8;
+            --button-bg-dark: #2a2a2a;
+            --button-hover-light: #c5c7cc;
+            --button-hover-dark: #333333;
+            --main-bg-light: #ffffff;
+            --main-bg-dark: #f5f5f5;
+        }
+
+        /* Theme-specific variables */
+        html[data-theme="light"] {
+            --sidebar-bg: var(--bg-light);
+            --sidebar-text: var(--text-light);
+            --sidebar-text-dim: var(--text-dim-light);
+            --button-bg: var(--button-bg-light);
+            --button-hover: var(--button-hover-light);
+            --accent: var(--accent-light);
+            --main-bg: var(--main-bg-light);
+        }
+
+        html[data-theme="dark"] {
+            --sidebar-bg: var(--bg-dark);
+            --sidebar-text: var(--text-dark);
+            --sidebar-text-dim: var(--text-dim-dark);
+            --button-bg: var(--button-bg-dark);
+            --button-hover: var(--button-hover-dark);
+            --accent: var(--accent-dark);
+            --main-bg: var(--main-bg-dark);
+        }
+
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            display: flex;
+            min-height: 100vh;
+            background-color: var(--main-bg);
+            transition: background-color 0.3s ease;
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            position: fixed;
+            height: 100vh;
+            width: 64px;
+            background-color: var(--sidebar-bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 0;
+            color: var(--sidebar-text);
+            z-index: 10;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Logo */
+        .logo {
+            margin-bottom: 24px;
+            width: 32px;
+            height: 32px;
+        }
+
+        .logo svg {
+            stroke: var(--sidebar-text);
+            transition: stroke 0.3s ease;
+        }
+
+        /* Add button */
+        .add-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--button-bg);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 32px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .add-button:hover {
+            background-color: var(--button-hover);
+        }
+
+        .add-button svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: var(--sidebar-text);
+            stroke-width: 2;
+            transition: stroke 0.3s ease;
+        }
+
+        /* Navigation */
+        .nav {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            padding: 12px 0;
+            text-decoration: none;
+            color: inherit;
+            transition: color 0.2s;
+            position: relative;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            color: var(--sidebar-text);
+            opacity: 1;
+        }
+
+        .nav-item svg {
+            width: 20px;
+            height: 20px;
+            margin-bottom: 4px;
+            transition: stroke 0.3s ease;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            opacity: 0.7;
+        }
+
+        /* Bottom section */
+        .bottom-section {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        /* Profile image */
+        .profile-img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            overflow: hidden;
+            background-color: #555;
+        }
+
+        /* Upgrade button */
+        .upgrade-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .upgrade-icon svg {
+            width: 14px;
+            height: 14px;
+            stroke: var(--sidebar-bg);
+            transition: stroke 0.3s ease;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            position: absolute;
+            top: 16px;
+            right: -40px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--button-bg);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            z-index: 20;
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--button-hover);
+        }
+
+        .theme-toggle svg {
+            width: 18px;
+            height: 18px;
+            fill: none;
+            stroke: var(--sidebar-text);
+            stroke-width: 2;
+            transition: stroke 0.3s ease;
+        }
+
+        /* Main content */
+       .main-content {
+    flex: 1;
+    margin-left: 64px;
+    padding: 0; /* إزالة الحشو يجعل iframe يملأ المساحة فعلياً */
+    height: 100vh;
+    overflow: hidden;
+}
+
+
+
+
+        html[data-theme="dark"] .main-content {
+            color: #333;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .sidebar {
+                bottom: 0;
+                width: 100%;
+                height: 64px;
+                flex-direction: row;
+                justify-content: space-around;
+                padding: 0 16px;
+            }
+
+            .logo, .add-button {
+                display: none;
+            }
+
+            .nav {
+                flex-direction: row;
+                justify-content: center;
+                gap: 24px;
+            }
+
+            .bottom-section {
+                margin-top: 0;
+                flex-direction: row;
+                gap: 24px;
+            }
+
+            .main-content {
+                margin-left: 0;
+                margin-bottom: 64px;
+            }
+
+            .theme-toggle {
+                top: 16px;
+                right: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <!-- Logo -->
+        <div class="logo">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 12L12 22L22 12L12 2Z" stroke="currentColor" stroke-width="2" />
+                <path d="M12 2V22" stroke="currentColor" stroke-width="2" />
+                <path d="M2 12H22" stroke="currentColor" stroke-width="2" />
+                <path d="M17 7L7 17" stroke="currentColor" stroke-width="2" />
+                <path d="M7 7L17 17" stroke="currentColor" stroke-width="2" />
+            </svg>
+        </div>
+
+        <!-- Add button -->
+        <button class="add-button">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 5V19" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M5 12H19" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </button>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <a href="#" class="nav-item active">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
+                    <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+                <span class="nav-label">Home</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
+                    <path d="M7 12H17" stroke="currentColor" stroke-width="2" />
+                    <path d="M12 7V17" stroke="currentColor" stroke-width="2" />
+                    <path d="M8 8L16 16" stroke="currentColor" stroke-width="2" />
+                    <path d="M16 8L8 16" stroke="currentColor" stroke-width="2" />
+                </svg>
+                <span class="nav-label">Discover</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="3" width="7" height="7" stroke="currentColor" stroke-width="2" />
+                    <rect x="14" y="3" width="7" height="7" stroke="currentColor" stroke-width="2" />
+                    <rect x="3" y="14" width="7" height="7" stroke="currentColor" stroke-width="2" />
+                    <rect x="14" y="14" width="7" height="7" stroke="currentColor" stroke-width="2" />
+                </svg>
+                <span class="nav-label">Spaces</span>
+            </a>
+        </nav>
+
+        <!-- Bottom section -->
+        <div class="bottom-section">
+            <a href="#" class="nav-item">
+                <div class="profile-img">
+                    <!-- Profile image placeholder -->
+                </div>
+                <span class="nav-label">Account</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <div class="upgrade-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 17L17 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M7 7H17V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <span class="nav-label">Upgrade</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <span class="nav-label">Install</span>
+            </a>
+        </div>
+
+        <!-- Theme toggle button -->
+        <button class="theme-toggle" id="theme-toggle">
+            <svg id="theme-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" stroke="currentColor" stroke-width="2" />
+                <path d="M12 2V4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                <path d="M12 20V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                <path d="M4.93 4.93L6.34 6.34" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                <path d="M17.66 17.66L19.07 19.07" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                <path d="M2 12H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                <path d="M20 12H22" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                <path d="M6.34 17.66L4.93 19.07" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                <path d="M19.07 4.93L17.66 6.34" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+        </button>
+    </aside>
+
+    <main class="main-content">
+    <span id="current-theme"></span>
+    </main>
+    <iframe src="https://udify.app/chat/TafBBtNwFpsh0uHw" frameborder="0" style="width: 100%; height: 100vh;"></iframe>
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const currentThemeText = document.getElementById('current-theme');
+        
+        // Check for saved theme preference or use default
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        currentThemeText.textContent = savedTheme.charAt(0).toUpperCase() + savedTheme.slice(1);
+        
+        // Update icon based on current theme
+        updateThemeIcon(savedTheme);
+        
+        // Toggle theme when button is clicked
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            currentThemeText.textContent = newTheme.charAt(0).toUpperCase() + newTheme.slice(1);
+            
+            updateThemeIcon(newTheme);
+        });
+        
+        function updateThemeIcon(theme) {
+            if (theme === 'dark') {
+                // Show sun icon for dark mode
+                themeIcon.innerHTML = `
+                    <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" stroke="currentColor" stroke-width="2" />
+                    <path d="M12 2V4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    <path d="M12 20V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    <path d="M4.93 4.93L6.34 6.34" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    <path d="M17.66 17.66L19.07 19.07" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    <path d="M2 12H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    <path d="M20 12H22" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    <path d="M6.34 17.66L4.93 19.07" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    <path d="M19.07 4.93L17.66 6.34" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                `;
+            } else {
+                // Show moon icon for light mode
+                themeIcon.innerHTML = `
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                `;
+            }
+        }
+
+        // Add active class to clicked nav items
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                // Prevent default for demo purposes
+                e.preventDefault();
+                
+                // Remove active class from all items
+                document.querySelectorAll('.nav-item').forEach(i => {
+                    i.classList.remove('active');
+                });
+                
+                // Add active class to clicked item
+                this.classList.add('active');
+            });
+        });
+
+        // Add button functionality
+        document.querySelector('.add-button').addEventListener('click', function() {
+            alert('Add button clicked!');
+        });
+    </script>
+</body>
+</html>
